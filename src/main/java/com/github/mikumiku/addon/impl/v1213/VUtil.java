@@ -1,5 +1,6 @@
 package com.github.mikumiku.addon.impl.v1213;
 
+import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.mixininterface.IRaycastContext;
 import meteordevelopment.meteorclient.mixininterface.IVec3d;
 import meteordevelopment.meteorclient.utils.player.Rotations;
@@ -19,6 +20,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.RaycastContext;
 
 import java.util.Optional;
@@ -79,5 +81,20 @@ public class VUtil implements com.github.mikumiku.addon.util.VUtil {
 
     public void setMovement(IVec3d movement, double x, double y, double z) {
         movement.meteor$set(x, y, z);
+    }
+
+    @Override
+    public PlayerMoveC2SPacket.PositionAndOnGround getPositionAndOnGround(double x, double y, double z, boolean onGround) {
+        return new PlayerMoveC2SPacket.PositionAndOnGround(x, y, z, onGround, MeteorClient.mc.player.horizontalCollision);
+    }
+
+    @Override
+    public PlayerMoveC2SPacket.OnGroundOnly getOnGroundOnly(boolean onGround) {
+        return new PlayerMoveC2SPacket.OnGroundOnly(onGround, MeteorClient.mc.player.horizontalCollision);
+    }
+
+    @Override
+    public int getTopY(MinecraftClient mc) {
+        return mc.world.getTopY(Heightmap.Type.WORLD_SURFACE, (int) mc.player.getX(), (int) mc.player.getZ());
     }
 }

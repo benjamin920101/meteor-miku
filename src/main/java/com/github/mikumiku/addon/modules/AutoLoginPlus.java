@@ -45,7 +45,7 @@ public class AutoLoginPlus extends BaseModule {
         );
 
     // 存储解析后的账户信息
-    private Map<String, String> accounts = new HashMap<>();
+    private final Map<String, String> accounts = new HashMap<>();
     private String lastDetectedUsername = "";
 
     public AutoLoginPlus() {

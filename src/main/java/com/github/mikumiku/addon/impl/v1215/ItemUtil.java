@@ -22,7 +22,14 @@ public class ItemUtil implements com.github.mikumiku.addon.util.ItemUtil {
     }
 
     @Override
-    public boolean isToolOrWeapon(Item item) {
-        return item.getComponents().contains(DataComponentTypes.TOOL) || item.getComponents().contains(DataComponentTypes.WEAPON);
+    public boolean isTool(Item item) {
+        return item.getComponents().contains(DataComponentTypes.TOOL);
+    }
+
+    @Override
+    public boolean isSword(Item item) {
+        ToolComponent toolComponent = item.getComponents().get(DataComponentTypes.TOOL);
+        return Objects.nonNull(toolComponent) && toolComponent.rules().stream()
+            .anyMatch(e -> e.blocks().stream().anyMatch(b -> b.isIn(BlockTags.SWORD_EFFICIENT)));
     }
 }

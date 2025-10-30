@@ -14,7 +14,12 @@ public class ItemUtil implements com.github.mikumiku.addon.util.ItemUtil {
     }
 
     @Override
-    public boolean isToolOrWeapon(Item item) {
-        return item instanceof PickaxeItem || item instanceof AxeItem || item instanceof ShovelItem || item instanceof SwordItem;
+    public boolean isTool(Item item) {
+        return item instanceof PickaxeItem || item instanceof AxeItem || item instanceof ShovelItem;
+    }
+
+    @Override
+    public boolean isSword(Item item) {
+        return item instanceof SwordItem;
     }
 }

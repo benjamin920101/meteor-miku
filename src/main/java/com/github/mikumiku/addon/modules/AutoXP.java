@@ -78,7 +78,7 @@ public class AutoXP extends BaseModule {
 
     // 内部状态
     private int delayTimer = 0;
-    private AtomicInteger xpBottleCount = new AtomicInteger(0);
+    private final AtomicInteger xpBottleCount = new AtomicInteger(0);
 
     public AutoXP() {
         super("自动丢XP", "自动丢经验瓶修装备");

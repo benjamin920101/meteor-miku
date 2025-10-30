@@ -3,6 +3,7 @@ package com.github.mikumiku.addon.util;
 import net.minecraft.client.input.Input;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -27,4 +28,8 @@ public interface PlayerUtil {
     World getEntityWorld(Entity entity);
 
     String getGameProfileName(PlayerEntity entity);
+
+    boolean blockedByShield(LivingEntity livingEntity, DamageSource source);
+
+    void setJumpCooldown(LivingEntity entity, int cooldown);
 }

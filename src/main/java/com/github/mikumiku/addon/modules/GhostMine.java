@@ -620,7 +620,7 @@ public class GhostMine extends BaseModule {
         }
 
         Item item = mc.player.getInventory().getStack(bestSlot).getItem();
-        return DV.of(ItemUtil.class).isToolOrWeapon(item) ? -1 : bestSlot;
+        return DV.of(ItemUtil.class).isTool(item) || DV.of(ItemUtil.class).isSword(item) ? -1 : bestSlot;
     }
 
     public BlockDate getBlockDate(BlockPos pos, Direction direction) {
@@ -672,7 +672,7 @@ public class GhostMine extends BaseModule {
 
 
             Item item = MinecraftClient.getInstance().player.getInventory().getStack(bestSlot).getItem();
-            if (!DV.of(ItemUtil.class).isToolOrWeapon(item)) {
+            if (!DV.of(ItemUtil.class).isTool(item) && !DV.of(ItemUtil.class).isSword(item)) {
                 bestSlot = -1;
             }
 
@@ -690,8 +690,8 @@ public class GhostMine extends BaseModule {
         }
     }
 
-    public static enum SwapMode {
+    public enum SwapMode {
         SILENT,
-        NORMAL;
+        NORMAL
     }
 }

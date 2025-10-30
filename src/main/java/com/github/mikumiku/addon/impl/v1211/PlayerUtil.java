@@ -1,8 +1,10 @@
 package com.github.mikumiku.addon.impl.v1211;
 
+import meteordevelopment.meteorclient.mixin.LivingEntityAccessor;
 import net.minecraft.client.input.Input;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -54,5 +56,16 @@ public class PlayerUtil implements com.github.mikumiku.addon.util.PlayerUtil {
     @Override
     public String getGameProfileName(PlayerEntity entity) {
         return entity.getGameProfile().getName();
+    }
+
+    @Override
+    public boolean blockedByShield(LivingEntity livingEntity, DamageSource source) {
+        return livingEntity.blockedByShield(source);
+    }
+
+    @Override
+    public void setJumpCooldown(LivingEntity entity, int cooldown) {
+        LivingEntityAccessor accessor = (LivingEntityAccessor) entity;
+        accessor.setJumpCooldown(0);
     }
 }

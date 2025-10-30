@@ -350,11 +350,11 @@ public class PlayerAlert extends BaseModule {
      * 发送聊天提醒 (离开)
      */
     private void sendChatAlertLeave(String playerName, String alertType) {
-        StringBuilder message = new StringBuilder();
-        message.append("§c[玩家提醒] §f").append(alertType).append(": §e").append(playerName);
 
         // 发送本地聊天消息
-        ChatUtils.info(message.toString());
+        ChatUtils.info("§c[玩家提醒] §f" + alertType + ": §e" + playerName
+            // 发送本地聊天消息
+        );
     }
 
     /**

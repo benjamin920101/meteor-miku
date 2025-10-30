@@ -245,7 +245,7 @@ public class RoadBuilder extends BaseModule {
 
     enum SlapType {
         UP,
-        DOWN;
+        DOWN
     }
 
 }

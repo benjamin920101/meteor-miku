@@ -431,13 +431,12 @@ public class ShulkerBoxItemFetcher extends BaseModule {
             return;
         }
 
-        if (!(mc.currentScreen instanceof HandledScreen)) {
+        if (!(mc.currentScreen instanceof HandledScreen<?> containerScreen)) {
             if (logActions.get())
                 info("等待容器界面打开... (当前界面: " + mc.currentScreen.getClass().getSimpleName() + ")");
             return;
         }
 
-        HandledScreen<?> containerScreen = (HandledScreen<?>) mc.currentScreen;
         var screenHandler = containerScreen.getScreenHandler();
 
         if (logActions.get()) info("容器界面已打开: " + containerScreen.getClass().getSimpleName());

@@ -128,7 +128,7 @@ public class AutoTrashModule extends BaseModule {
 
     // 内部变量
     private int tickTimer = 0;
-    private Set<Item> allTrashItems = new HashSet<>();
+    private final Set<Item> allTrashItems = new HashSet<>();
 
     public AutoTrashModule() {
         super("自动扔垃圾", "自动丢弃背包中的垃圾物品");

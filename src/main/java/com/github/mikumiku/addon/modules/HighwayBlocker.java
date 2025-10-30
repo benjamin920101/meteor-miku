@@ -124,7 +124,7 @@ public class HighwayBlocker extends BaseModule {
     private int currentDirection = 0; // 0=X+, 1=Z+, 2=X-, 3=Z-
     private int preDirection = -1; // 0=X+, 1=Z+, 2=X-, 3=Z-
     private int totalPlaced = 0;
-    private List<BlockPos> placeList = new ArrayList<>();
+    private final List<BlockPos> placeList = new ArrayList<>();
     private int tickCounter = 0;
     private int tickBlockCount = 0;
 

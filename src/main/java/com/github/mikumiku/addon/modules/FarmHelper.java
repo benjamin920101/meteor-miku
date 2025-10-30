@@ -369,10 +369,7 @@ public class FarmHelper extends BaseModule {
         }
 
         // 可 waterlogged 且已含水
-        if (state.contains(WATERLOGGED) && state.get(WATERLOGGED)) {
-            return true;
-        }
-        return false;
+        return state.contains(WATERLOGGED) && state.get(WATERLOGGED);
     }
 
     // 检查方块是否可以锄地
@@ -462,8 +459,7 @@ public class FarmHelper extends BaseModule {
     private boolean isCropMature(BlockPos pos) {
         BlockState state = mc.world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block instanceof CropBlock) {
-            CropBlock crop = (CropBlock) block;
+        if (block instanceof CropBlock crop) {
             return crop.isMature(state);
         } else if (block == Blocks.MELON || block == Blocks.PUMPKIN) {
             // 南瓜和西瓜没有成熟度，直接可以收割

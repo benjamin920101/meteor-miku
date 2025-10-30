@@ -120,7 +120,7 @@ public class AutoSandMiner extends BaseModule {
     private BlockPos lastMiningPos = null;
     private BlockPos currentTarget = null;
     private BlockPos toolShulkerPos = null; // 用户选择的工具潜影盒位置
-    private Set<BlockPos> protectedShulkerBoxes = new HashSet<>(); // 受保护的潜影盒位置
+    private final Set<BlockPos> protectedShulkerBoxes = new HashSet<>(); // 受保护的潜影盒位置
     private int shulkerInteractionTimer = 0; // 潜影盒交互计时器
     private boolean waitingForShulkerOpen = false; // 等待潜影盒打开
 

@@ -1,12 +1,17 @@
 package com.github.mikumiku.addon.impl.v12110;
 
+import meteordevelopment.meteorclient.mixin.LivingEntityAccessor;
 import net.minecraft.client.input.Input;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -57,5 +62,35 @@ public class PlayerUtil implements com.github.mikumiku.addon.util.PlayerUtil {
     @Override
     public String getGameProfileName(PlayerEntity entity) {
         return entity.getGameProfile().name();
+    }
+
+    @Override
+    public boolean blockedByShield(LivingEntity livingEntity, DamageSource source) {
+        Entity entity = source.getSource();
+        boolean bl = false;
+        if (entity instanceof PersistentProjectileEntity persistentProjectileEntity) {
+            if (persistentProjectileEntity.getPierceLevel() > 0) {
+                bl = true;
+            }
+        }
+
+        ItemStack itemStack = livingEntity.getBlockingItem();
+        if (!source.isIn(DamageTypeTags.BYPASSES_SHIELD) && itemStack != null && itemStack.getItem() instanceof ShieldItem && !bl) {
+            Vec3d vec3d = source.getPosition();
+            if (vec3d != null) {
+                Vec3d vec3d2 = livingEntity.getRotationVector(0.0F, livingEntity.getHeadYaw());
+                Vec3d vec3d3 = vec3d.relativize(getEntityPos(livingEntity));
+                vec3d3 = (new Vec3d(vec3d3.x, 0.0F, vec3d3.z)).normalize();
+                return vec3d3.dotProduct(vec3d2) < (double)0.0F;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void setJumpCooldown(LivingEntity entity, int cooldown) {
+        LivingEntityAccessor accessor = (LivingEntityAccessor) entity;
+        accessor.meteor$setJumpCooldown(0);
     }
 }

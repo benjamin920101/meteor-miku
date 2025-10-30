@@ -315,7 +315,7 @@ public class SeedMine extends BaseModule {
             return;
         }
 
-        info("注意种子是否正确。当前种子: " + Seeds.get().getSeed().seed + " 版本: " + mcVersion.get().name);
+        info("注意种子是否正确。当前种子: " + Seeds.get().getSeed().seed() + " 版本: " + mcVersion.get().name);
 
         reload();
     }
@@ -385,7 +385,7 @@ public class SeedMine extends BaseModule {
         int chunkZ = chunkPos.z << 4;
         ChunkRandom random = new ChunkRandom(ChunkRandom.RandomProvider.XOROSHIRO.create(0));
 
-        long populationSeed = random.setPopulationSeed(worldSeed.seed, chunkX, chunkZ);
+        long populationSeed = random.setPopulationSeed(worldSeed.seed(), chunkX, chunkZ);
         HashMap<Ore, Set<Vec3d>> h = new HashMap<>();
 
         for (Ore ore : oreSet) {

@@ -138,7 +138,7 @@ public class HighwayClearer extends BaseModule {
     private int currentDirection = 0; // 0=X+, 1=Z+, 2=X-, 3=Z-
     private int preDirection = -1; // 0=X+, 1=Z+, 2=X-, 3=Z-
     private int totalMined = 0;
-    private List<BlockPos> mineList = new ArrayList<>();
+    private final List<BlockPos> mineList = new ArrayList<>();
     private int tickCounter = 0;
     private int tickBlockCount = 0;
 

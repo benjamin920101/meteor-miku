@@ -207,12 +207,8 @@ public class FastFall extends BaseModule {
         }
 
         // 检查状态效果
-        if (mc.player.hasStatusEffect(StatusEffects.LEVITATION) ||
-            mc.player.hasStatusEffect(StatusEffects.SLOW_FALLING)) {
-            return false;
-        }
-
-        return true;
+        return !mc.player.hasStatusEffect(StatusEffects.LEVITATION) &&
+            !mc.player.hasStatusEffect(StatusEffects.SLOW_FALLING);
     }
 
     /**

@@ -741,7 +741,7 @@ public class VillagerRoller extends BaseModule {
                         mc.getSoundManager().play(PositionedSoundInstance.master(sound.get().get(0),
                             soundPitch.get().floatValue(), soundVolume.get().floatValue()));
                     }
-                    info(String.format("找到了"));
+                    info("找到了");
                     if (disconnectIfFound.get()) {
                         String levelText = (enchantLevel > 1 || enchant.key().value().getMaxLevel() > 1) ? " " + enchantLevel : "";
                         String message = String.format(

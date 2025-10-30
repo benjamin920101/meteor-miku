@@ -48,7 +48,6 @@ public class EndCityLootTest {
     }
 
     private void assertTrue(Object... format) {
-        return;
     }
 
 
@@ -96,7 +95,6 @@ public class EndCityLootTest {
     }
 
     private void assertEquals(Object... o) {
-        return;
     }
 
 

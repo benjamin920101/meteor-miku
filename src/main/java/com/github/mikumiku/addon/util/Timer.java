@@ -13,11 +13,11 @@ public class Timer {
     }
 
     public boolean tick(int tick) {
-        return this.passedMs(tick * 50);
+        return this.passedMs(tick * 50L);
     }
 
     public boolean passedTicks(int tick) {
-        return this.passedMs(tick * 50);
+        return this.passedMs(tick * 50L);
     }
 
     public boolean passedS(double s) {

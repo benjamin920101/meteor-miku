@@ -7,6 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.commands.Commands;
+import meteordevelopment.meteorclient.renderer.Fonts;
+import meteordevelopment.meteorclient.renderer.text.FontFace;
+import meteordevelopment.meteorclient.renderer.text.FontFamily;
+import meteordevelopment.meteorclient.renderer.text.FontInfo.Type;
+import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
@@ -16,6 +21,7 @@ import meteordevelopment.meteorclient.utils.player.ChatUtils;
 @Slf4j
 public class MikuMikuAddon extends MeteorAddon {
     public static final Category CATEGORY = new Category("Miku");
+    public static final Category CATEGORY_MIKU_COMBAT = new Category("Miku 战斗");
     public static final HudGroup HUD_GROUP = new HudGroup("Miku");
 
     @Override
@@ -28,7 +34,7 @@ public class MikuMikuAddon extends MeteorAddon {
         modules.add(new PlayerAlert());
         modules.add(new AutoTrashModule());
         modules.add(new LiquidFiller());
-        modules.add(new AutoSandMiner());
+        modules.add(new AutoMiner());
         modules.add(new AutoUseItems());
         modules.add(new TreeAura());
         modules.add(new SeedMine());
@@ -48,7 +54,6 @@ public class MikuMikuAddon extends MeteorAddon {
         modules.add(new AnchorAuraPlus());
         modules.add(new AutoEz());
         modules.add(new RoadBuilder());
-//        modules.add(new KillAuraPlus());
         modules.add(new SelfTrapPlusPlus());
         modules.add(new AutoSM());
         modules.add(new AutoLoginPlus());
@@ -62,37 +67,52 @@ public class MikuMikuAddon extends MeteorAddon {
         modules.add(new FastFall());
         modules.add(new TridentFly());
         modules.add(new ElytraFlyPlus());
+        modules.add(new Hover());
         modules.add(new HighwayBlocker());
         modules.add(new HighwayClearer());
-//        modules.add(new MikuModule(CATEGORY, "miku", "miku"));
-//        MikuModule mikuModule = new MikuModule(CATEGORY, "miku插件", "miku");
-        ChatUtils.warning("Miku插件完全开源免费。更新免费获取地址: https://github.com/mikumiku7/meteor-miku/releases");
-        ChatUtils.warning("Miku插件群：1013297171");
-        // Commands
+        modules.add(new Criticals());
+        modules.add(new MaceCombo());
+        modules.add(new AutoFollowPlayer());
+        modules.add(new OneKeyPearl());
+        modules.add(new NoJumpDelay());
+        modules.add(new Scaffold());
+        modules.add(new BedrockFinder());
+        modules.add(new ChestplateFly());
+        modules.add(new UserGuide());
+        modules.add(new AutoSlab());
+        modules.add(new CometTunnel());
+        modules.add(new FishingRodFace());
+        modules.add(new KillAuraMiku());
+        modules.add(new BestPrinter());
+        modules.add(new Nuker());
+        ChatUtils.warning("Miku插件完全不开源收费贼贵，这是开源版本。");
+        ChatUtils.warning("Miku插件群：太吵了天天@你让你交钱");
         Commands.add(new CommandMiku());
-
-        // HUD
         Hud.get().register(HudMiku.INFO);
-        AutoSM autoSM = modules.get(AutoSM.class);
-        //todo kill aura
-        //todo fly
 
-//        if (!autoSM.isActive()) {
-//            autoSM.toggle();
-//        }
+        try {
+            Config config = Config.get();
+            config.customFont.set(true);
+            FontFamily dengxianFamily = Fonts.getFamily("Dengxian");
+            if (dengxianFamily != null) {
+                FontFace dengxianFont = dengxianFamily.get(Type.Regular);
+                if (dengxianFont != null) {
+                    config.font.set(dengxianFont);
+                }
+            }
+        } catch (Exception var6) {
+        }
     }
 
-    @Override
     public void onRegisterCategories() {
         Modules.registerCategory(CATEGORY);
+        Modules.registerCategory(CATEGORY_MIKU_COMBAT);
     }
 
-    @Override
     public String getPackage() {
         return "com.github.mikumiku.addon";
     }
 
-    @Override
     public GithubRepo getRepo() {
         return new GithubRepo("mikumiku7", "meteor-miku");
     }

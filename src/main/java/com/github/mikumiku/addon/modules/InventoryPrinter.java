@@ -154,13 +154,12 @@ public class InventoryPrinter extends BaseModule {
     }
 
     private void printCurrentContainer() {
-        if (!(mc.currentScreen instanceof HandledScreen)) {
+        if (!(mc.currentScreen instanceof HandledScreen<?> screen)) {
             info("=== 当前容器信息 ===");
             info("没有打开的容器界面");
             return;
         }
 
-        HandledScreen<?> screen = (HandledScreen<?>) mc.currentScreen;
         ScreenHandler handler = screen.getScreenHandler();
 
         info("=== 当前容器信息 ===");

@@ -7,6 +7,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -42,4 +43,10 @@ public interface VUtil {
     void setMovement(IRaycastContext raycastContext, Vec3d source, Vec3d vec3d, RaycastContext.ShapeType shapeType, RaycastContext.FluidHandling fluidHandling, ClientPlayerEntity player);
 
     void setMovement(IVec3d movement, double x, double y, double z);
+
+    PlayerMoveC2SPacket.PositionAndOnGround getPositionAndOnGround(double x, double y, double z, boolean onGround);
+
+    PlayerMoveC2SPacket.OnGroundOnly getOnGroundOnly(boolean onGround);
+
+    int getTopY(MinecraftClient mc);
 }

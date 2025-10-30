@@ -23,7 +23,7 @@ public class AutoCraft extends BaseModule {
     private final Setting<List<Item>> items = sgGeneral.add(new ItemListSetting.Builder()
         .name("物品")
         .description("想要自动合成的物品列表")
-        .defaultValue(Arrays.asList())
+        .defaultValue(List.of())
         .build()
     );
 
@@ -63,13 +63,12 @@ public class AutoCraft extends BaseModule {
         if (mc.interactionManager == null) return;
         if (items.get().isEmpty()) return;
 
-        if (!(mc.player.currentScreenHandler instanceof CraftingScreenHandler)) return;
+        if (!(mc.player.currentScreenHandler instanceof CraftingScreenHandler currentScreenHandler)) return;
 
 
         if (antiDesync.get())
             mc.player.getInventory().updateItems();
 
-        CraftingScreenHandler currentScreenHandler = (CraftingScreenHandler) mc.player.currentScreenHandler;
         List<Item> itemList = items.get();
         List<RecipeResultCollection> recipeResultCollectionList = mc.player.getRecipeBook().getOrderedResults();
 //        for (RecipeResultCollection recipeResultCollection : recipeResultCollectionList) {
