@@ -72,7 +72,7 @@ public class TreeAura extends BaseModule {
 
     // 错误消息时间控制（避免频繁打印）
     private long lastBonemealErrorTime = 0;
-    private long lastSaplingErrorTime = 0;
+    private final long lastSaplingErrorTime = 0;
     private static final long ERROR_COOLDOWN = 5000; //  冷却时间
 
 
@@ -191,10 +191,7 @@ public class TreeAura extends BaseModule {
         if (fungus.equals(Blocks.CRIMSON_FUNGUS) && nylium.equals(Blocks.CRIMSON_NYLIUM)) {
             return true;
         }
-        if (fungus.equals(Blocks.WARPED_FUNGUS) && nylium.equals(Blocks.WARPED_NYLIUM)) {
-            return true;
-        }
-        return false;
+        return fungus.equals(Blocks.WARPED_FUNGUS) && nylium.equals(Blocks.WARPED_NYLIUM);
     }
 
     // 检查是否可以在指定位置种植（基于可用物品）

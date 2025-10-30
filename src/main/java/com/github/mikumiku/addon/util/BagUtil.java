@@ -1,5 +1,6 @@
 package com.github.mikumiku.addon.util;
 
+import com.github.mikumiku.addon.dynamic.DV;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.mixininterface.IClientPlayerInteractionManager;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
@@ -9,11 +10,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.Hand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +29,11 @@ public class BagUtil {
     }
 
     public static void doSwap(int slot) {
-        inventorySwap(slot, MeteorClient.mc.player.getInventory().selectedSlot);
+        inventorySwap(slot, DV.of(PlayerUtil.class).getSelectedSlot(MeteorClient.mc.player.getInventory()));
     }
 
     public static void doSwapOnTruth(int slot) {
-        inventorySwap(slot, MeteorClient.mc.player.getInventory().selectedSlot);
+        inventorySwap(slot, DV.of(PlayerUtil.class).getSelectedSlot(MeteorClient.mc.player.getInventory()));
     }
 
     public static void doSwapOffHand(int slot) {
@@ -46,7 +46,6 @@ public class BagUtil {
             lastSlot = -1;
             lastSelect = -1;
         } else if (slot - 36 != selectedSlot) {
-
             MeteorClient.mc
                 .interactionManager
                 .clickSlot(MeteorClient.mc.player.currentScreenHandler.syncId, slot, selectedSlot, SlotActionType.SWAP, MeteorClient.mc.player);
@@ -63,11 +62,28 @@ public class BagUtil {
         MeteorClient.mc
             .interactionManager
             .clickSlot(MeteorClient.mc.player.currentScreenHandler.syncId, SlotUtils.indexToId(solt), 0, SlotActionType.PICKUP, MeteorClient.mc.player);
-        MeteorClient.mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(MeteorClient.mc.player, Mode.RELEASE_SHIFT_KEY));
+        DV.of(PacketUtil.class).sendReleaseShift();
     }
 
     public static void sync() {
         MeteorClient.mc.player.networkHandler.sendPacket(new CloseHandledScreenC2SPacket(MeteorClient.mc.player.currentScreenHandler.syncId));
+    }
+
+    public static void quickUse(Item item) {
+        FindItemResult result = find(item);
+        if (result.found()) {
+            int selectedSlot = DV.of(PlayerUtil.class).getSelectedSlot(MeteorClient.mc.player.getInventory());
+            int itemSlot = result.slot();
+            boolean wasHeld = result.isMainHand();
+            if (!wasHeld) {
+                quickSwap().fromId(selectedSlot).to(itemSlot);
+            }
+
+            MeteorClient.mc.interactionManager.interactItem(MeteorClient.mc.player, Hand.MAIN_HAND);
+            if (!wasHeld) {
+                quickSwap().fromId(selectedSlot).to(itemSlot);
+            }
+        }
     }
 
     public static int findBlockInventorySlotGrim(Block block) {
@@ -78,6 +94,28 @@ public class BagUtil {
         for (int i = 0; i < 45; i++) {
             ItemStack stack = MeteorClient.mc.player.getInventory().getStack(i);
             if (stack.getItem() == item) {
+                return i < 9 ? i + 36 : i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int findItemInventorySlot(Item item) {
+        for (int i = 0; i < 45; i++) {
+            ItemStack stack = MeteorClient.mc.player.getInventory().getStack(i);
+            if (stack.getItem() == item) {
+                return i < 9 ? i + 36 : i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int findItemInventorySlot(Predicate<ItemStack> isGood) {
+        for (int i = 0; i < 45; i++) {
+            ItemStack stack = MeteorClient.mc.player.getInventory().getStack(i);
+            if (isGood.test(stack)) {
                 return i < 9 ? i + 36 : i;
             }
         }
@@ -238,7 +276,7 @@ public class BagUtil {
             return findInHotbar(isGood);
         } else {
             return testInMainHand(isGood)
-                ? new FindItemResult(MeteorClient.mc.player.getInventory().selectedSlot, MeteorClient.mc.player.getMainHandStack().getCount())
+                ? new FindItemResult(DV.of(PlayerUtil.class).getSelectedSlot(MeteorClient.mc.player.getInventory()), MeteorClient.mc.player.getMainHandStack().getCount())
                 : find(isGood, 0, 8);
         }
     }
@@ -256,7 +294,7 @@ public class BagUtil {
             return new FindItemResult(45, MeteorClient.mc.player.getOffHandStack().getCount());
         } else {
             return testInMainHand(isGood)
-                ? new FindItemResult(MeteorClient.mc.player.getInventory().selectedSlot, MeteorClient.mc.player.getMainHandStack().getCount())
+                ? new FindItemResult(DV.of(PlayerUtil.class).getSelectedSlot(MeteorClient.mc.player.getInventory()), MeteorClient.mc.player.getMainHandStack().getCount())
                 : find(isGood, 0, 8);
         }
     }
@@ -288,7 +326,7 @@ public class BagUtil {
         }
     }
 
-    public static List<Integer> findSoltsByItemClass(Class itemClass) {
+    public static List<Integer> findSoltsByItemClass(Class<?> itemClass) {
         List<Integer> result = new ArrayList<>();
 
         for (int i = 0; i < 36; i++) {
@@ -372,12 +410,12 @@ public class BagUtil {
             return true;
         } else if (slot >= 0 && slot <= 8) {
             if (swapBack && previousSlot == -1) {
-                previousSlot = MeteorClient.mc.player.getInventory().selectedSlot;
+                previousSlot = DV.of(PlayerUtil.class).getSelectedSlot(MeteorClient.mc.player.getInventory());
             } else if (!swapBack) {
                 previousSlot = -1;
             }
 
-            MeteorClient.mc.player.getInventory().selectedSlot = slot;
+            DV.of(PlayerUtil.class).setSelectedSlot(MeteorClient.mc.player.getInventory(), slot);
             ((IClientPlayerInteractionManager) MeteorClient.mc.interactionManager).meteor$syncSelected();
             return true;
         } else {
@@ -431,19 +469,8 @@ public class BagUtil {
     }
 
     public static void switchToSlot(int slot) {
-        MeteorClient.mc.player.getInventory().selectedSlot = slot;
+        DV.of(PlayerUtil.class).setSelectedSlot(MeteorClient.mc.player.getInventory(), slot);
         MeteorClient.mc.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(slot));
-    }
-
-    public static int findItemInventorySlot(Item item) {
-        for (int i = 0; i < 45; i++) {
-            ItemStack stack = MeteorClient.mc.player.getInventory().getStack(i);
-            if (stack.getItem() == item) {
-                return i < 9 ? i + 36 : i;
-            }
-        }
-
-        return -1;
     }
 
     public static class Action {

@@ -1,5 +1,6 @@
 package com.github.mikumiku.addon.modules;
 
+import com.github.mikumiku.addon.BaseModule;
 import com.github.mikumiku.addon.MikuMikuAddon;
 import com.github.mikumiku.addon.util.WaypointUtils;
 import com.github.mikumiku.addon.util.seeds.Seed;
@@ -16,7 +17,6 @@ import com.seedfinding.mcterrain.TerrainGenerator;
 import lombok.extern.slf4j.Slf4j;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
-import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import static meteordevelopment.meteorclient.utils.world.Dimension.End;
 
 @Slf4j
-public class ElytraFinder extends Module {
+public class ElytraFinder extends BaseModule {
 
     // 设置组
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -113,6 +113,7 @@ public class ElytraFinder extends Module {
 
     @Override
     public void onActivate() {
+        super.onActivate();
         startElytraSearch();
         info("鞘翅搜索模块已启用");
     }
@@ -179,7 +180,7 @@ public class ElytraFinder extends Module {
         }
 
         // 验证种子数据
-        if (worldSeed.seed == null || worldSeed.version == null) {
+        if (worldSeed.seed() == null || worldSeed.version() == null) {
             error("种子数据无效，请重新设置种子");
             return;
         }
@@ -211,13 +212,13 @@ public class ElytraFinder extends Module {
 
         try {
             // 验证种子数据
-            if (worldSeed == null || worldSeed.seed == null || worldSeed.version == null) {
+            if (worldSeed == null || worldSeed.seed() == null || worldSeed.version() == null) {
                 error("种子数据无效");
                 return;
             }
 
-            long seed = worldSeed.seed;
-            MCVersion version = worldSeed.version;
+            long seed = worldSeed.seed();
+            MCVersion version = worldSeed.version();
 
             info("使用种子: " + seed + ", 版本: " + version.name);
 
@@ -369,13 +370,6 @@ public class ElytraFinder extends Module {
     }
 
     // 内部类存储鞘翅位置信息
-    private static class ElytraLocation {
-        final BPos position;
-        final double distance;
-
-        ElytraLocation(BPos position, double distance) {
-            this.position = position;
-            this.distance = distance;
-        }
+        private record ElytraLocation(BPos position, double distance) {
     }
 }

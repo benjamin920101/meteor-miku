@@ -3,6 +3,7 @@ package com.github.mikumiku.addon.modules;
 import baritone.api.BaritoneAPI;
 import baritone.api.Settings;
 import baritone.api.pathing.goals.GoalBlock;
+import com.github.mikumiku.addon.BaseModule;
 import com.github.mikumiku.addon.MikuMikuAddon;
 import meteordevelopment.meteorclient.events.entity.player.InteractBlockEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -28,7 +29,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.*;
 
-public class AutoSandMiner extends Module {
+public class AutoSandMiner extends BaseModule {
 
     // 设置组
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -119,7 +120,7 @@ public class AutoSandMiner extends Module {
     private BlockPos lastMiningPos = null;
     private BlockPos currentTarget = null;
     private BlockPos toolShulkerPos = null; // 用户选择的工具潜影盒位置
-    private Set<BlockPos> protectedShulkerBoxes = new HashSet<>(); // 受保护的潜影盒位置
+    private final Set<BlockPos> protectedShulkerBoxes = new HashSet<>(); // 受保护的潜影盒位置
     private int shulkerInteractionTimer = 0; // 潜影盒交互计时器
     private boolean waitingForShulkerOpen = false; // 等待潜影盒打开
 
@@ -136,6 +137,7 @@ public class AutoSandMiner extends Module {
 
     @Override
     public void onActivate() {
+        super.onActivate();
         if (!BaritoneUtils.IS_AVAILABLE) {
             error("Baritone 不可用！");
             toggle();

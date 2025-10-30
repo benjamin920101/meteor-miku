@@ -1,5 +1,6 @@
 package com.github.mikumiku.addon.modules;
 
+import com.github.mikumiku.addon.BaseModule;
 import com.github.mikumiku.addon.MikuMikuAddon;
 import com.github.mikumiku.addon.util.WaypointUtils;
 import com.github.mikumiku.addon.util.seeds.Seed;
@@ -14,7 +15,6 @@ import com.seedfinding.mcfeature.structure.*;
 import lombok.extern.slf4j.Slf4j;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
-import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import static meteordevelopment.meteorclient.utils.world.Dimension.Overworld;
 
 @Slf4j
-public class StructureFinder extends Module {
+public class StructureFinder extends BaseModule {
 
     // 设置组
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -92,126 +92,126 @@ public class StructureFinder extends Module {
 
     // 结构设置
     private final Setting<Boolean> findVillage = sgStructures.add(new BoolSetting.Builder()
-        .name("查找村庄")
+        .name("村庄")
         .description("查找村庄结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findShipwreck = sgStructures.add(new BoolSetting.Builder()
-        .name("查找沉船")
+        .name("沉船")
         .description("查找沉船结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findBuriedTreasure = sgStructures.add(new BoolSetting.Builder()
-        .name("查找埋藏的宝藏")
+        .name("埋藏的宝藏")
         .description("查找埋藏的宝藏结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findOceanRuin = sgStructures.add(new BoolSetting.Builder()
-        .name("查找海底废墟")
+        .name("海底废墟")
         .description("查找海底废墟结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findPillagerOutpost = sgStructures.add(new BoolSetting.Builder()
-        .name("查找掠夺者前哨站")
+        .name("掠夺者前哨站")
         .description("查找掠夺者前哨站结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findNetherFortress = sgStructures.add(new BoolSetting.Builder()
-        .name("查找下界要塞")
+        .name("下界要塞")
         .description("查找下界要塞结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findBastionRemnant = sgStructures.add(new BoolSetting.Builder()
-        .name("查找堡垒遗迹")
+        .name("堡垒遗迹")
         .description("查找堡垒遗迹结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findEndCity = sgStructures.add(new BoolSetting.Builder()
-        .name("查找末地城")
+        .name("末地城")
         .description("查找末地城结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findDesertPyramid = sgStructures.add(new BoolSetting.Builder()
-        .name("查找沙漠神殿")
+        .name("沙漠神殿")
         .description("查找沙漠神殿结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findIgloo = sgStructures.add(new BoolSetting.Builder()
-        .name("查找雪屋")
+        .name("雪屋")
         .description("查找雪屋结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findJunglePyramid = sgStructures.add(new BoolSetting.Builder()
-        .name("查找丛林神庙")
+        .name("丛林神庙")
         .description("查找丛林神庙结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findMansion = sgStructures.add(new BoolSetting.Builder()
-        .name("查找林地府邸")
+        .name("林地府邸")
         .description("查找林地府邸结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findMineshaft = sgStructures.add(new BoolSetting.Builder()
-        .name("查找废弃矿井")
+        .name("废弃矿井")
         .description("查找废弃矿井结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findMonument = sgStructures.add(new BoolSetting.Builder()
-        .name("查找海底神殿")
+        .name("海底神殿")
         .description("查找海底神殿结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findNetherFossil = sgStructures.add(new BoolSetting.Builder()
-        .name("查找下界化石")
+        .name("下界化石")
         .description("查找下界化石结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findRuinedPortal = sgStructures.add(new BoolSetting.Builder()
-        .name("查找废弃传送门")
+        .name("废弃传送门")
         .description("查找废弃传送门结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findStronghold = sgStructures.add(new BoolSetting.Builder()
-        .name("查找要塞")
+        .name("要塞")
         .description("查找要塞结构")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Boolean> findSwampHut = sgStructures.add(new BoolSetting.Builder()
-        .name("查找沼泽小屋")
+        .name("沼泽小屋")
         .description("查找沼泽小屋结构")
         .defaultValue(false)
         .build()
@@ -227,6 +227,7 @@ public class StructureFinder extends Module {
 
     @Override
     public void onActivate() {
+        super.onActivate();
         if (autoSearch.get()) {
             startStructureSearch();
         }
@@ -295,7 +296,7 @@ public class StructureFinder extends Module {
         }
 
         // 验证种子数据
-        if (worldSeed.seed == null || worldSeed.version == null) {
+        if (worldSeed.seed() == null || worldSeed.version() == null) {
             error("种子数据无效，请重新设置种子");
             return;
         }
@@ -327,13 +328,13 @@ public class StructureFinder extends Module {
 
         try {
             // 验证种子数据
-            if (worldSeed == null || worldSeed.seed == null || worldSeed.version == null) {
+            if (worldSeed == null || worldSeed.seed() == null || worldSeed.version() == null) {
                 error("种子数据无效");
                 return;
             }
 
-            long seed = worldSeed.seed;
-            MCVersion version = worldSeed.version;
+            long seed = worldSeed.seed();
+            MCVersion version = worldSeed.version();
 
             info("使用种子: " + seed + ", 版本: " + version.name);
 
@@ -673,15 +674,6 @@ public class StructureFinder extends Module {
     }
 
     // 内部类存储结构位置信息
-    private static class StructureLocation {
-        final BPos position;
-        final double distance;
-        final String structureType;
-
-        StructureLocation(BPos position, double distance, String structureType) {
-            this.position = position;
-            this.distance = distance;
-            this.structureType = structureType;
-        }
+        private record StructureLocation(BPos position, double distance, String structureType) {
     }
 }

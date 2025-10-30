@@ -1,11 +1,9 @@
 package com.github.mikumiku.addon.modules;
 
 
-import com.github.mikumiku.addon.MikuMikuAddon;
+import com.github.mikumiku.addon.BaseModule;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
-import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.meteorclient.utils.player.SlotUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.item.Item;
@@ -14,7 +12,7 @@ import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.*;
 
-public class AutoTrashModule extends Module {
+public class AutoTrashModule extends BaseModule {
 
     // 设置组
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -130,14 +128,15 @@ public class AutoTrashModule extends Module {
 
     // 内部变量
     private int tickTimer = 0;
-    private Set<Item> allTrashItems = new HashSet<>();
+    private final Set<Item> allTrashItems = new HashSet<>();
 
     public AutoTrashModule() {
-        super(MikuMikuAddon.CATEGORY, "自动扔垃圾", "自动丢弃背包中的垃圾物品");
+        super("自动扔垃圾", "自动丢弃背包中的垃圾物品");
     }
 
     @Override
     public void onActivate() {
+        super.onActivate();
         updateTrashItems();
         tickTimer = 0;
         info("自动扔垃圾已启用，共 %d 种垃圾物品", allTrashItems.size());
