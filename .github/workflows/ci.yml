@@ -1,17 +1,23 @@
-name: CI - Build and publish malilib to mavenLocal
+name: CI - Publish malilib and build
 
 on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      minecraft_version:
+        description: 'Minecraft version (optional). If omitted, DEFAULT_MC_VERSION is used.'
+        required: false
+        default: ''
 
 env:
-  # 可修改預設的 Minecraft 版本；如果在 workflow_dispatch 時提供 input，會使用 input 的值
   DEFAULT_MC_VERSION: "1.21.5"
 
 jobs:
-  build:
+  publish-malilib:
     runs-on: ubuntu-latest
+    outputs:
+      mc: ${{ steps.mcversion.outputs.mc }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,68 +34,78 @@ jobs:
       - name: Determine Minecraft version
         id: mcversion
         run: |
-          # 使�� workflow input（若有）或 env/default
           if [ -n "${{ github.event.inputs.minecraft_version }}" ]; then
             echo "mc=${{ github.event.inputs.minecraft_version }}" >> $GITHUB_OUTPUT
           else
-            # 從 repo 的 versions 目錄讀，若有指定 -Pminecraft_version 可以改用那個
             MC="${{ env.DEFAULT_MC_VERSION }}"
-            echo "Using default MC version: $MC"
             echo "mc=$MC" >> $GITHUB_OUTPUT
           fi
 
-      - name: Read malilib version from versions/${{ steps.mcversion.outputs.mc }}.properties
+      - name: Read malilib version
         id: malilibversion
         run: |
+          set -e
           MC="${{ steps.mcversion.outputs.mc }}"
           PROP_FILE="versions/${MC}.properties"
-          echo "Looking for malilib_version in $PROP_FILE"
           if [ ! -f "$PROP_FILE" ]; then
             echo "Error: $PROP_FILE not found"
             exit 1
           fi
-          # 解析 malilib_version（去掉空白與引號）
           MALIV=$(grep -E '^malilib_version' "$PROP_FILE" | cut -d'=' -f2- | tr -d '[:space:]' | tr -d '"')
-          if [ -z "$MALIV" ]; then
-            echo "Error: malilib_version not found in $PROP_FILE"
-            exit 1
-          fi
           echo "malilib=$MALIV" >> $GITHUB_OUTPUT
 
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-
-      - name: Checkout and publish malilib to mavenLocal
+      - name: Clone and publish malilib to mavenLocal
         run: |
           set -e
           MALIV="${{ steps.malilibversion.outputs.malilib }}"
-          echo "malilib_version: $MALIV"
-
-          # 臨時目錄
-          TMP="/tmp/malilib"
-          rm -rf "$TMP"
+          TMP="$(mktemp -d)"
           git clone https://github.com/sakura-ryoko/malilib.git "$TMP"
           cd "$TMP"
-
-          # 若 malilib_version 看起來像 commit hash 或 tag 就嘗試 checkout（若失敗就繼續，但會嘗試 build master）
-          if git rev-parse --verify --quiet "$MALIV" >/dev/null; then
-            git checkout "$MALIV" || true
-          else
-            # 嘗試當 tag 或分支
-            git checkout "$MALIV" || true
-          fi
-
+          git fetch --all --tags --prune
+          git checkout "$MALIV" || true
           ./gradlew publishToMavenLocal -x test --no-daemon
+
+      - name: Upload malilib artifact path
+        uses: actions/upload-artifact@v4
+        with:
+          name: malilib-maven
+          path: |
+            ~/.m2/repository/com/github/sakura-ryoko
+
+  build:
+    needs: publish-malilib
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Download malilib artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: malilib-maven
+          path: ./m2_repo_partial
+
+      - name: Merge downloaded artifacts into ~/.m2/repository
+        run: |
+          mkdir -p ~/.m2/repository
+          cp -r ./m2_repo_partial/* ~/.m2/repository/ || true
+          ls -R ~/.m2/repository | sed -n '1,200p'
+
+      - name: Determine Minecraft version (from previous job)
+        run: |
+          echo "mc=${{ needs.publish-malilib.outputs.mc }}" > mc.txt
+          cat mc.txt
 
       - name: Build project
         run: |
-          # 使用與你原本相同的 build 命令，並把 minecraft_version 傳入
-          MC="${{ steps.mcversion.outputs.mc }}"
-          ./gradlew clean build -x test --no-configuration-cache -Pminecraft_version="$MC"
-
-      - name: Upload build artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: built-jars-${{ steps.mcversion.outputs.mc }}
-          path: build/libs/*.jar
+          MC="${{ needs.publish-malilib.outputs.mc }}"
+          ./gradlew build -Pminecraft_version="$MC" --no-daemon
