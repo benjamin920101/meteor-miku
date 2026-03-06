@@ -56,6 +56,9 @@ jobs:
           fi
           echo "malilib=$MALIV" >> $GITHUB_OUTPUT
 
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Checkout and publish malilib to mavenLocal
         run: |
           set -e
