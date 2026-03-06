@@ -27,6 +27,7 @@ base {
 }
 
 repositories {
+    mavenLocal() // 新增：優先從本地 maven 檢查（CI 會在跑前 publishToMavenLocal）
     exclusiveContent {
         forRepository {
             maven {
